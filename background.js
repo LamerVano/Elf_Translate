@@ -22,12 +22,6 @@ translateText = function(info)
 			wordExtern += ruChar[engChar.indexOf(word[i].toLowerCase())];
 	}
 	
-	chrome.contextMenus.update("trans1",
-		{
-			title: "Перевод с эльфийского " + wordExtern
-		}
-	);
-	
 	chrome.notifications.create(
 		{
 			type : "basic",
