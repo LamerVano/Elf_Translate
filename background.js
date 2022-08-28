@@ -30,11 +30,9 @@ function copyTextToClipboard(text) {
 }
 
 var wordExtern = "";
-	
-translateText = function(info)
-{
-    var word = info.selectionText;
-	
+
+function translate(word)
+{	
 	wordExtern = "";
 	
 	var engChar = ["`", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "\'", "z", "x", "c", "v", "b", "n", "m", ",", "."];
@@ -46,9 +44,30 @@ translateText = function(info)
 			wordExtern += word[i];
 		else
 			wordExtern += ruChar[engChar.indexOf(word[i].toLowerCase())];
-	}
+	}	
+}
+	
+translateTextCopy = function(info, tab)
+{
+    translate( info.selectionText);
 	
 	copyTextToClipboard(wordExtern);
+	
+	chrome.notifications.create(
+		{
+			type : "basic",
+			message: wordExtern,
+			title: "Перевод",
+			iconUrl : "icon.png"
+		}
+	);
+ };
+ 
+ translateTextChange = function(info, tab)
+{
+    translate( info.selectionText);
+	
+	chrome.tabs.sendMessage(tab.id, wordExtern);
 	
 	chrome.notifications.create(
 		{
@@ -62,9 +81,18 @@ translateText = function(info)
 
 chrome.contextMenus.create(
 	{
-		id: "trans1",
-		title: "Перевод с эльфийского",
+		id: "trans1Copy",
+		title: "Перевод с эльфийского копирование",
 		contexts:["selection"],
-		onclick: translateText
+		onclick: translateTextCopy
+	}
+);
+
+chrome.contextMenus.create(
+	{
+		id: "trans1Change",
+		title: "Перевод с эльфийского замена",
+		contexts:["selection"],
+		onclick: translateTextChange
 	}
 );
